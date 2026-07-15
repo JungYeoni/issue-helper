@@ -40,7 +40,7 @@
   "version": "1.0.0",
   "description": "이슈 생성 시 브랜치명/커밋 메시지를 규칙 기반으로 제안하는 GitHub Actions 워크플로우",
   "scripts": {
-    "test": "node --test scripts/"
+    "test": "node --test"
   }
 }
 ```
@@ -67,7 +67,7 @@ test("git 브랜치명에 쓸 수 없는 특수문자를 제거한다", () => {
 });
 
 test("특수문자만 있어 결과가 빈 문자열이면 untitled를 반환한다", () => {
-  assert.equal(slugify("!!!???"), "untitled");
+  assert.equal(slugify(":?*[]"), "untitled");
 });
 
 test("50자를 넘으면 50자로 자른다", () => {
@@ -84,7 +84,7 @@ test("앞뒤 공백은 제거된다", () => {
 
 - [ ] **Step 3: 테스트 실행 → 실패 확인**
 
-Run: `node --test scripts/`
+Run: `node --test`
 Expected: FAIL — `Cannot find module './suggestion.js'`
 
 - [ ] **Step 4: slugify 최소 구현**
@@ -114,7 +114,7 @@ module.exports = { slugify, MAX_SLUG_LENGTH, COMMIT_TYPE };
 
 - [ ] **Step 5: 테스트 실행 → 통과 확인**
 
-Run: `node --test scripts/`
+Run: `node --test`
 Expected: PASS (6 tests)
 
 - [ ] **Step 6: 커밋**
@@ -162,7 +162,7 @@ test("커밋 메시지는 제목 앞뒤 공백을 정리한다", () => {
 
 - [ ] **Step 2: 테스트 실행 → 실패 확인**
 
-Run: `node --test scripts/`
+Run: `node --test`
 Expected: FAIL — `buildBranchName is not a function`
 
 - [ ] **Step 3: 최소 구현**
@@ -187,7 +187,7 @@ module.exports = { slugify, buildBranchName, buildCommitMessage, MAX_SLUG_LENGTH
 
 - [ ] **Step 4: 테스트 실행 → 통과 확인**
 
-Run: `node --test scripts/`
+Run: `node --test`
 Expected: PASS (9 tests)
 
 - [ ] **Step 5: 커밋**
@@ -231,7 +231,7 @@ test("코멘트 템플릿을 생성한다", () => {
 
 - [ ] **Step 2: 테스트 실행 → 실패 확인**
 
-Run: `node --test scripts/`
+Run: `node --test`
 Expected: FAIL — `buildComment is not a function`
 
 - [ ] **Step 3: 최소 구현**
@@ -261,7 +261,7 @@ module.exports = {
 
 - [ ] **Step 4: 테스트 실행 → 통과 확인**
 
-Run: `node --test scripts/`
+Run: `node --test`
 Expected: PASS (10 tests)
 
 - [ ] **Step 5: 커밋**
