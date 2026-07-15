@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { slugify, buildBranchName, buildCommitMessage } = require("./suggestion.js");
+const { slugify, buildBranchName, buildCommitMessage, buildComment } = require("./suggestion.js");
 
 test("한글 제목의 공백을 하이픈으로 치환한다", () => {
   assert.equal(slugify("서울 데이터 보고서 오류"), "서울-데이터-보고서-오류");
@@ -39,4 +39,12 @@ test("커밋 메시지는 원본 제목을 유지한다", () => {
 
 test("커밋 메시지는 제목 앞뒤 공백을 정리한다", () => {
   assert.equal(buildCommitMessage(5, "  오타 수정  "), "feat: 오타 수정 (#5)");
+});
+
+test("코멘트 템플릿을 생성한다", () => {
+  const comment = buildComment(123, "서울 데이터 보고서 오류");
+  assert.equal(
+    comment,
+    "## 🤖 제안\n\n**브랜치**: `feat/123-서울-데이터-보고서-오류`\n**커밋 메시지**: `feat: 서울 데이터 보고서 오류 (#123)`\n"
+  );
 });

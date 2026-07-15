@@ -23,4 +23,17 @@ function buildCommitMessage(issueNumber, title) {
   return `${COMMIT_TYPE}: ${title.trim()} (#${issueNumber})`;
 }
 
-module.exports = { slugify, buildBranchName, buildCommitMessage, MAX_SLUG_LENGTH, COMMIT_TYPE };
+function buildComment(issueNumber, title) {
+  const branch = buildBranchName(issueNumber, title);
+  const commitMessage = buildCommitMessage(issueNumber, title);
+  return `## 🤖 제안\n\n**브랜치**: \`${branch}\`\n**커밋 메시지**: \`${commitMessage}\`\n`;
+}
+
+module.exports = {
+  slugify,
+  buildBranchName,
+  buildCommitMessage,
+  buildComment,
+  MAX_SLUG_LENGTH,
+  COMMIT_TYPE,
+};
