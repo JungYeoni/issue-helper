@@ -16,11 +16,11 @@ permissions:
 ```
 
 - `GITHUB_TOKEN` 기본 권한만 사용. 별도 시크릿 불필요.
-- 실행 환경: `ubuntu-latest`, 별도 checkout 불필요 (repo 코드 접근 불필요).
+- 실행 환경: `ubuntu-latest`. slug/브랜치/커밋메시지 로직을 `scripts/suggestion.js` 모듈로 분리했기 때문에 `actions/checkout`으로 repo를 먼저 체크아웃해야 한다 (아래 "구현 방식" 참고).
 
 ## 구현 방식
 
-`actions/github-script@v7`를 사용해 워크플로우 YAML 내부에 JavaScript로 직접 구현한다. 별도 스크립트 파일이나 패키지 설치가 필요 없고, `context.payload.issue`로 제목/번호에 바로 접근 가능하며 `github.rest.issues.createComment`로 코멘트 작성까지 한 스텝에서 처리할 수 있다.
+로직(`slugify`, `buildBranchName`, `buildCommitMessage`, `buildComment`)은 `scripts/suggestion.js`에 순수 함수로 구현하고 `node:test`로 단위 테스트한다. 워크플로우는 `actions/checkout`으로 repo를 체크아웃한 뒤 `actions/github-script@v7` 스텝에서 `GITHUB_WORKSPACE` 경로로 이 모듈을 `require`해 `context.payload.issue`의 제목/번호를 넘기고, `github.rest.issues.createComment`로 코멘트를 작성한다. (최초 설계 시 YAML 인라인 구현을 고려했으나, 로직을 테스트 가능한 모듈로 분리하는 쪽을 선택하면서 checkout이 필요해졌다.)
 
 ## Slug 생성 규칙
 
