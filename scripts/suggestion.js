@@ -23,10 +23,11 @@ function buildCommitMessage(issueNumber, title) {
   return `${COMMIT_TYPE}: ${title.trim()} (#${issueNumber})`;
 }
 
-function buildComment(issueNumber, title) {
+function buildComment(issueNumber, title, createdAt) {
   const branch = buildBranchName(issueNumber, title);
   const commitMessage = buildCommitMessage(issueNumber, title);
-  return `## Guide by YEONI-ISSUE-HELPER\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
+  const date = createdAt.slice(0, 10).replace(/-/g, "");
+  return `## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n\`\`\`\n${date}\n\`\`\`\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
 }
 
 module.exports = {

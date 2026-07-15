@@ -1,5 +1,7 @@
 # issue-helper (YEONI-ISSUE-HELPER)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 이슈가 생성되면 규칙 기반으로 브랜치명과 커밋 메시지를 제안해 이슈 코멘트로 남기는 GitHub Actions 워크플로우.
 
 - 외부 LLM API 호출 없음
@@ -13,6 +15,10 @@
 ```
 ## Guide by YEONI-ISSUE-HELPER
 
+### 날짜
+
+20260715
+
 ### 브랜치
 
 feat/123-서울-데이터-보고서-오류
@@ -24,18 +30,46 @@ feat: 서울 데이터 보고서 오류 (#123)
 
 ### 생성 규칙
 
-| 항목 | 규칙 |
-|---|---|
-| 브랜치명 | `feat/{이슈번호}-{slug}` (커밋 타입은 항상 `feat` 고정) |
-| 커밋 메시지 | `feat: {원본 제목} (#{이슈번호})` — 원본 제목은 trim만 하고 slug화하지 않음 |
-| slug | 한글 원문 유지(번역/로마자 변환 없음) · 브랜치명에 못 쓰는 문자 제거 · 공백은 `-`로 치환 · 최대 50자 · 결과가 빈 문자열이면 `untitled` |
+| 항목        | 규칙                                                                                                                                   |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 날짜        | 이슈 생성일(`issue.created_at`)을 `YYYYMMDD` 형식으로 표기                                                                             |
+| 브랜치명    | `feat/{이슈번호}-{slug}` (커밋 타입은 항상 `feat` 고정)                                                                                |
+| 커밋 메시지 | `feat: {원본 제목} (#{이슈번호})` — 원본 제목은 trim만 하고 slug화하지 않음                                                            |
+| slug        | 한글 원문 유지(번역/로마자 변환 없음) · 브랜치명에 못 쓰는 문자 제거 · 공백은 `-`로 치환 · 최대 50자 · 결과가 빈 문자열이면 `untitled` |
 
 ## 설치 방법
 
-이 레포 전체를 쓰지 않고, 아래 2개 파일만 대상 레포에 복사하면 된다.
+### 방법 A. 재사용 가능한 워크플로우로 참조 (추천)
+
+대상 레포에 파일을 복사하지 않고, 이 레포의 워크플로우를 그대로 호출한다. 이 레포가 업데이트되면 별도 작업 없이 바로 반영된다.
+
+대상 레포에 아래 파일 하나만 추가하면 된다 (`.github/workflows/issue-helper.yml`):
+
+```yaml
+name: Issue Helper
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  suggest:
+    uses: JungYeoni/issue-helper/.github/workflows/issue-helper.yml@main
+```
+
+- `@main` 대신 특정 태그(`@v1` 등)로 고정하면, 이 레포가 바뀌어도 그 버전 동작이 유지된다. 최신 반영을 원하면 `@main`을 쓴다.
+- 대상 레포에도 `permissions`(`contents: read`, `issues: write`)를 선언해야 한다 — 호출하는 쪽과 호출받는 쪽 권한의 교집합만 적용되기 때문이다.
+
+### 방법 B. 파일 복사
+
+레포 간 의존성 없이 완전히 독립적으로 쓰고 싶다면, 아래 2개 파일만 대상 레포에 복사한다.
 
 1. `scripts/suggestion.js`
-2. `.github/workflows/issue-helper.yml`
+2. `.github/workflows/issue-helper.yml` (이때 `workflow_call:` 트리거와 `repository`/`ref`가 지정된 checkout 스텝은 지워도 된다 — 같은 레포 안의 스크립트를 그대로 쓰면 되기 때문)
 
 테스트까지 같이 가져가고 싶다면 (선택):
 
@@ -43,7 +77,7 @@ feat: 서울 데이터 보고서 오류 (#123)
 4. `.github/workflows/test.yml`
 5. `package.json`의 `"test": "node --test"` 항목
 
-별도 npm 패키지 설치나 Secret 등록은 필요 없다. 커밋/푸시하면 다음 이슈 생성부터 바로 동작한다.
+두 방법 모두 별도 npm 패키지 설치나 Secret 등록은 필요 없다. 적용 후 다음 이슈 생성부터 바로 동작한다.
 
 ## 권한 설정 (필수)
 
@@ -51,11 +85,12 @@ feat: 서울 데이터 보고서 오류 (#123)
 
 ```yaml
 permissions:
-  contents: read   # actions/checkout이 레포를 클론하기 위해 필요
-  issues: write    # 이슈에 코멘트를 작성하기 위해 필요
+  contents: read # actions/checkout이 레포를 클론하기 위해 필요
+  issues: write # 이슈에 코멘트를 작성하기 위해 필요
 ```
 
 > **주의**
+>
 > - `permissions` 블록을 명시하면, 여기에 적지 않은 나머지 스코프는 전부 `none`으로 취급된다.
 > - `contents: read`가 없으면 **private 레포에서** `actions/checkout` 단계가 `Repository not found`로 실패한다. (public 레포는 공개 접근이라 우연히 성공하는 경우가 있어 놓치기 쉬운 함정 — 실제로 private 레포 테스트에서 확인했다.)
 > - 레포/조직 설정(Settings → Actions → General → Workflow permissions)에서 기본 `GITHUB_TOKEN` 권한을 읽기 전용으로 제한해둔 경우, 워크플로우 파일에 `issues: write`를 선언해도 막힐 수 있다. 이건 워크플로우 코드가 아니라 레포/조직 설정 문제이므로, 코멘트가 안 달리면 이 설정부터 확인한다.
@@ -67,8 +102,8 @@ Public/private 레포 모두 코드 동작 자체는 동일하다. 다만 privat
 `scripts/suggestion.js` 상단의 상수만 바꾸면 동작을 조정할 수 있다.
 
 ```js
-const MAX_SLUG_LENGTH = 50;   // slug 최대 길이
-const COMMIT_TYPE = "feat";   // 브랜치/커밋 접두사 (항상 고정값)
+const MAX_SLUG_LENGTH = 50; // slug 최대 길이
+const COMMIT_TYPE = 'feat'; // 브랜치/커밋 접두사 (항상 고정값)
 ```
 
 코멘트 문구 자체를 바꾸고 싶다면 `buildComment` 함수의 템플릿 문자열을 수정하면 된다.
@@ -86,7 +121,7 @@ npm test
 ```bash
 node -e "
 const { buildComment } = require('./scripts/suggestion.js');
-console.log(buildComment(123, '서울 데이터 보고서 오류'));
+console.log(buildComment(123, '서울 데이터 보고서 오류', '2026-07-15T09:00:00Z'));
 "
 ```
 

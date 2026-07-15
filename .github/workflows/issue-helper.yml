@@ -3,6 +3,7 @@ name: Issue Helper
 on:
   issues:
     types: [opened]
+  workflow_call:
 
 permissions:
   contents: read
@@ -12,8 +13,11 @@ jobs:
   suggest:
     runs-on: ubuntu-latest
     steps:
-      - name: 저장소 체크아웃
+      - name: issue-helper 스크립트 체크아웃
         uses: actions/checkout@v4
+        with:
+          repository: JungYeoni/issue-helper
+          ref: ${{ github.workflow_sha }}
 
       - name: 브랜치명/커밋 메시지 제안 코멘트 작성
         uses: actions/github-script@v7
@@ -22,7 +26,7 @@ jobs:
             const { buildComment } = require(`${process.env.GITHUB_WORKSPACE}/scripts/suggestion.js`);
 
             const issue = context.payload.issue;
-            const comment = buildComment(issue.number, issue.title);
+            const comment = buildComment(issue.number, issue.title, issue.created_at);
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,

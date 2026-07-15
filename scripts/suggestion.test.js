@@ -42,9 +42,9 @@ test("커밋 메시지는 제목 앞뒤 공백을 정리한다", () => {
 });
 
 test("코멘트 템플릿을 생성한다", () => {
-  const comment = buildComment(123, "서울 데이터 보고서 오류");
+  const comment = buildComment(123, "서울 데이터 보고서 오류", "2026-07-15T09:00:00Z");
   assert.equal(
     comment,
-    "## Guide by YEONI-ISSUE-HELPER\n\n### 브랜치\n\n```\nfeat/123-서울-데이터-보고서-오류\n```\n\n### 커밋 메시지\n\n```\nfeat: 서울 데이터 보고서 오류 (#123)\n```\n"
+    "## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n```\n20260715\n```\n\n### 브랜치\n\n```\nfeat/123-서울-데이터-보고서-오류\n```\n\n### 커밋 메시지\n\n```\nfeat: 서울 데이터 보고서 오류 (#123)\n```\n"
   );
 });
