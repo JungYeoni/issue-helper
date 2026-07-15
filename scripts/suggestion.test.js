@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { slugify } = require("./suggestion.js");
+const { slugify, buildBranchName, buildCommitMessage } = require("./suggestion.js");
 
 test("한글 제목의 공백을 하이픈으로 치환한다", () => {
   assert.equal(slugify("서울 데이터 보고서 오류"), "서울-데이터-보고서-오류");
@@ -27,4 +27,16 @@ test("50자를 넘으면 50자로 자른다", () => {
 
 test("앞뒤 공백은 제거된다", () => {
   assert.equal(slugify("  제목  "), "제목");
+});
+
+test("이슈 번호와 slug로 브랜치명을 만든다", () => {
+  assert.equal(buildBranchName(123, "서울 데이터 보고서 오류"), "feat/123-서울-데이터-보고서-오류");
+});
+
+test("커밋 메시지는 원본 제목을 유지한다", () => {
+  assert.equal(buildCommitMessage(123, "서울 데이터 보고서 오류"), "feat: 서울 데이터 보고서 오류 (#123)");
+});
+
+test("커밋 메시지는 제목 앞뒤 공백을 정리한다", () => {
+  assert.equal(buildCommitMessage(5, "  오타 수정  "), "feat: 오타 수정 (#5)");
 });

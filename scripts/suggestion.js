@@ -15,4 +15,12 @@ function slugify(title) {
   return s.length > 0 ? s : "untitled";
 }
 
-module.exports = { slugify, MAX_SLUG_LENGTH, COMMIT_TYPE };
+function buildBranchName(issueNumber, title) {
+  return `${COMMIT_TYPE}/${issueNumber}-${slugify(title)}`;
+}
+
+function buildCommitMessage(issueNumber, title) {
+  return `${COMMIT_TYPE}: ${title.trim()} (#${issueNumber})`;
+}
+
+module.exports = { slugify, buildBranchName, buildCommitMessage, MAX_SLUG_LENGTH, COMMIT_TYPE };
