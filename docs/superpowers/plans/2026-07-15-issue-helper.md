@@ -17,7 +17,7 @@
 - slug가 빈 문자열이 되면 `untitled`로 대체
 - 외부 LLM API·Secret 사용 금지 — `actions/github-script`와 기본 `GITHUB_TOKEN`만 사용
 - 워크플로우 트리거는 `issues: [opened]`만 (edited/reopened 등 무시)
-- 권한은 `issues: write`만 부여
+- 권한은 `contents: read`(checkout용), `issues: write`만 부여 (private 레포 테스트에서 `contents: read` 없이는 actions/checkout이 "Repository not found"로 실패함을 확인 후 추가)
 
 ---
 
@@ -293,6 +293,7 @@ on:
     types: [opened]
 
 permissions:
+  contents: read
   issues: write
 
 jobs:

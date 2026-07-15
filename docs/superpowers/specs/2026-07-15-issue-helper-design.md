@@ -12,11 +12,13 @@ on:
     types: [opened]
 
 permissions:
+  contents: read
   issues: write
 ```
 
 - `GITHUB_TOKEN` 기본 권한만 사용. 별도 시크릿 불필요.
 - 실행 환경: `ubuntu-latest`. slug/브랜치/커밋메시지 로직을 `scripts/suggestion.js` 모듈로 분리했기 때문에 `actions/checkout`으로 repo를 먼저 체크아웃해야 한다 (아래 "구현 방식" 참고).
+- `contents: read`는 checkout에 필요. private 레포에서 이 권한 없이 `permissions: issues: write`만 선언하면 `actions/checkout`이 "Repository not found"로 실패한다 (public 레포에서는 공개 접근이라 우연히 성공했음 — 실제 private 레포 테스트로 확인).
 
 ## 구현 방식
 
