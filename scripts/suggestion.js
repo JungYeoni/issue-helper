@@ -26,7 +26,7 @@ function buildCommitMessage(issueNumber, title) {
 function buildComment(issueNumber, title) {
   const branch = buildBranchName(issueNumber, title);
   const commitMessage = buildCommitMessage(issueNumber, title);
-  return `## 🤖 제안\n\n**브랜치**: \`${branch}\`\n**커밋 메시지**: \`${commitMessage}\`\n`;
+  return `## YEONI-ISSUE-HELPER 제안\n\n**브랜치**: \`${branch}\`\n**커밋 메시지**: \`${commitMessage}\`\n`;
 }
 
 module.exports = {
