@@ -45,6 +45,6 @@ test("코멘트 템플릿을 생성한다", () => {
   const comment = buildComment(123, "서울 데이터 보고서 오류");
   assert.equal(
     comment,
-    "## YEONI-ISSUE-HELPER 제안\n\n**브랜치**: `feat/123-서울-데이터-보고서-오류`\n**커밋 메시지**: `feat: 서울 데이터 보고서 오류 (#123)`\n"
+    "## Guide by YEONI-ISSUE-HELPER\n\n### 브랜치\n\n```\nfeat/123-서울-데이터-보고서-오류\n```\n\n### 커밋 메시지\n\n```\nfeat: 서울 데이터 보고서 오류 (#123)\n```\n"
   );
 });
