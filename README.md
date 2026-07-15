@@ -94,3 +94,7 @@ console.log(buildComment(123, '서울 데이터 보고서 오류'));
 
 - 설계: [docs/superpowers/specs/2026-07-15-issue-helper-design.md](docs/superpowers/specs/2026-07-15-issue-helper-design.md)
 - 구현 계획: [docs/superpowers/plans/2026-07-15-issue-helper.md](docs/superpowers/plans/2026-07-15-issue-helper.md)
+
+## 라이선스
+
+[MIT](LICENSE)
