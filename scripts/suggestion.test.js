@@ -103,6 +103,14 @@ test("resolveCommitType: 여러 키워드가 동시에 있으면 우선순위(fi
   assert.equal(resolveCommitType("버그 리팩토링"), "fix");
 });
 
+test("resolveCommitType: 영어 키워드는 단어 경계로만 매칭한다 (prefix에 fix가 포함돼도 오탐 없음)", () => {
+  assert.equal(resolveCommitType("커밋 prefix 규칙 변경"), "feat");
+});
+
+test("resolveCommitType: 영어 키워드는 단어 경계로만 매칭한다 (debug에 bug가 포함돼도 오탐 없음)", () => {
+  assert.equal(resolveCommitType("Add debug logging to parser"), "feat");
+});
+
 test("이슈 생성일/번호/slug로 브랜치명을 만든다 (제목의 '오류' 키워드로 fix 분류됨)", () => {
   assert.equal(
     buildBranchName(123, "서울 데이터 보고서 오류", "2026-07-15T09:00:00Z"),

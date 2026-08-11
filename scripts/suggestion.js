@@ -16,10 +16,15 @@ function removeLeadingBracketTag(text) {
   return text.replace(/^\s*\[[^\]]*\]\s*/, "");
 }
 
+function matchesKeyword(normalized, keyword) {
+  if (!/^[a-z]+$/.test(keyword)) return normalized.includes(keyword);
+  return new RegExp(`\\b${keyword}\\b`).test(normalized);
+}
+
 function resolveCommitType(title) {
   const normalized = title.trim().toLowerCase();
   for (const rule of COMMIT_TYPE_RULES) {
-    if (rule.keywords.some((keyword) => normalized.includes(keyword.toLowerCase()))) {
+    if (rule.keywords.some((keyword) => matchesKeyword(normalized, keyword.toLowerCase()))) {
       return rule.type;
     }
   }
