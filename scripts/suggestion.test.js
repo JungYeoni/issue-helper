@@ -53,6 +53,10 @@ test("이모지로만 구성된 제목은 untitled가 된다", () => {
   assert.equal(slugify("🔥🔥"), "untitled");
 });
 
+test("국기 이모지(지역 표시 문자)는 제거하지 않는다", () => {
+  assert.equal(slugify("🇰🇷 한국 이슈"), "🇰🇷_한국_이슈");
+});
+
 test("이슈 생성일/번호/slug로 브랜치명을 만든다", () => {
   assert.equal(
     buildBranchName(123, "서울 데이터 보고서 오류", "2026-07-15T09:00:00Z"),
@@ -80,6 +84,10 @@ test("커밋 메시지에서 이모지를 제거하고 남은 연속 공백을 �
 
 test("커밋 메시지에서 공백 없이 붙은 이모지도 제거한다", () => {
   assert.equal(buildCommitMessage(5, "🔥버그"), "feat: 버그 (#5)");
+});
+
+test("커밋 메시지에서 제목이 이모지로만 구성되면 untitled로 대체된다", () => {
+  assert.equal(buildCommitMessage(70, "🔥🔥"), "feat: untitled (#70)");
 });
 
 test("코멘트 템플릿을 생성한다", () => {

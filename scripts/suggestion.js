@@ -1,6 +1,6 @@
 const MAX_SLUG_LENGTH = 50;
 const COMMIT_TYPE = "feat";
-const EMOJI_REGEX = /[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}‍️]/gu;
+const EMOJI_REGEX = /[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}\u{FE0F}]/gu;
 
 function removeEmoji(text) {
   return text.replace(EMOJI_REGEX, "");
@@ -31,7 +31,7 @@ function buildBranchName(issueNumber, title, createdAt) {
 
 function buildCommitMessage(issueNumber, title) {
   const cleaned = removeEmoji(title.trim()).replace(/\s+/g, " ").trim();
-  return `${COMMIT_TYPE}: ${cleaned} (#${issueNumber})`;
+  return `${COMMIT_TYPE}: ${cleaned.length > 0 ? cleaned : "untitled"} (#${issueNumber})`;
 }
 
 function buildComment(issueNumber, title, createdAt) {
