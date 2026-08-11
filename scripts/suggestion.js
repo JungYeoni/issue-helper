@@ -3,20 +3,24 @@ const COMMIT_TYPE = "feat";
 
 function slugify(title) {
   let s = title.trim();
-  s = s.replace(/\s+/g, "-");
+  s = s.replace(/\s+/g, "_");
   s = s.replace(/[~^:?*[\]\\"'<>|]/g, "");
-  s = s.replace(/\.{2,}/g, "-");
-  s = s.replace(/-{2,}/g, "-");
-  s = s.replace(/^[-.]+|[-.]+$/g, "");
+  s = s.replace(/\.{2,}/g, "_");
+  s = s.replace(/_{2,}/g, "_");
+  s = s.replace(/^[_.]+|[_.]+$/g, "");
   if (s.length > MAX_SLUG_LENGTH) {
     s = s.slice(0, MAX_SLUG_LENGTH);
-    s = s.replace(/^[-.]+|[-.]+$/g, "");
+    s = s.replace(/^[_.]+|[_.]+$/g, "");
   }
   return s.length > 0 ? s : "untitled";
 }
 
-function buildBranchName(issueNumber, title) {
-  return `${COMMIT_TYPE}/${issueNumber}-${slugify(title)}`;
+function formatDate(createdAt) {
+  return createdAt.slice(0, 10).replace(/-/g, "");
+}
+
+function buildBranchName(issueNumber, title, createdAt) {
+  return `${COMMIT_TYPE}/${formatDate(createdAt)}_#${issueNumber}_${slugify(title)}`;
 }
 
 function buildCommitMessage(issueNumber, title) {
@@ -24,9 +28,9 @@ function buildCommitMessage(issueNumber, title) {
 }
 
 function buildComment(issueNumber, title, createdAt) {
-  const branch = buildBranchName(issueNumber, title);
+  const branch = buildBranchName(issueNumber, title, createdAt);
   const commitMessage = buildCommitMessage(issueNumber, title);
-  const date = createdAt.slice(0, 10).replace(/-/g, "");
+  const date = formatDate(createdAt);
   return `## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n\`\`\`\n${date}\n\`\`\`\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
 }
 
