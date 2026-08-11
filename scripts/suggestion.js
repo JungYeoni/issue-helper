@@ -1,8 +1,14 @@
 const MAX_SLUG_LENGTH = 50;
 const COMMIT_TYPE = "feat";
+const EMOJI_REGEX = /[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}‍️]/gu;
+
+function removeEmoji(text) {
+  return text.replace(EMOJI_REGEX, "");
+}
 
 function slugify(title) {
   let s = title.trim();
+  s = removeEmoji(s);
   s = s.replace(/\s+/g, "_");
   s = s.replace(/[~^:?*[\]\\"'<>|]/g, "");
   s = s.replace(/\.{2,}/g, "_");
@@ -24,7 +30,8 @@ function buildBranchName(issueNumber, title, createdAt) {
 }
 
 function buildCommitMessage(issueNumber, title) {
-  return `${COMMIT_TYPE}: ${title.trim()} (#${issueNumber})`;
+  const cleaned = removeEmoji(title.trim()).replace(/\s+/g, " ").trim();
+  return `${COMMIT_TYPE}: ${cleaned} (#${issueNumber})`;
 }
 
 function buildComment(issueNumber, title, createdAt) {

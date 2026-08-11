@@ -29,6 +29,30 @@ test("앞뒤 공백은 제거된다", () => {
   assert.equal(slugify("  제목  "), "제목");
 });
 
+test("공백을 동반한 이모지는 제거되고 남은 공백은 구분자 하나로 축약된다", () => {
+  assert.equal(slugify("🔥 버그 수정"), "버그_수정");
+});
+
+test("공백 없이 붙은 이모지는 제거만 되고 단어는 그대로 붙는다", () => {
+  assert.equal(slugify("버그🔥긴급"), "버그긴급");
+});
+
+test("ZWJ로 결합된 복합 이모지를 전부 제거한다", () => {
+  assert.equal(slugify("가족👨‍👩‍👧 사진"), "가족_사진");
+});
+
+test("variation selector가 붙은 이모지를 제거한다", () => {
+  assert.equal(slugify("사랑❤️해요"), "사랑해요");
+});
+
+test("피부색 수식자가 붙은 이모지를 제거한다", () => {
+  assert.equal(slugify("좋아요👍🏽"), "좋아요");
+});
+
+test("이모지로만 구성된 제목은 untitled가 된다", () => {
+  assert.equal(slugify("🔥🔥"), "untitled");
+});
+
 test("이슈 생성일/번호/slug로 브랜치명을 만든다", () => {
   assert.equal(
     buildBranchName(123, "서울 데이터 보고서 오류", "2026-07-15T09:00:00Z"),
@@ -48,6 +72,14 @@ test("커밋 메시지는 원본 제목을 유지한다", () => {
 
 test("커밋 메시지는 제목 앞뒤 공백을 정리한다", () => {
   assert.equal(buildCommitMessage(5, "  오타 수정  "), "feat: 오타 수정 (#5)");
+});
+
+test("커밋 메시지에서 이모지를 제거하고 남은 연속 공백을 하나로 축약한다", () => {
+  assert.equal(buildCommitMessage(70, "🔥 버그 수정"), "feat: 버그 수정 (#70)");
+});
+
+test("커밋 메시지에서 공백 없이 붙은 이모지도 제거한다", () => {
+  assert.equal(buildCommitMessage(5, "🔥버그"), "feat: 버그 (#5)");
 });
 
 test("코멘트 템플릿을 생성한다", () => {
