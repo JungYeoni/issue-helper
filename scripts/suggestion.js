@@ -1,14 +1,35 @@
 const MAX_SLUG_LENGTH = 50;
-const COMMIT_TYPE = "feat";
 const EMOJI_REGEX = /[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}\u{FE0F}]/gu;
+const COMMIT_TYPE_RULES = [
+  { type: "fix", keywords: ["버그", "오류", "에러", "bug", "fix", "error"] },
+  { type: "refactor", keywords: ["리팩토링", "refactor"] },
+  { type: "docs", keywords: ["문서", "docs"] },
+  { type: "chore", keywords: ["기타", "chore"] },
+];
+const DEFAULT_COMMIT_TYPE = "feat";
 
 function removeEmoji(text) {
   return text.replace(EMOJI_REGEX, "");
 }
 
+function removeLeadingBracketTag(text) {
+  return text.replace(/^\s*\[[^\]]*\]\s*/, "");
+}
+
+function resolveCommitType(title) {
+  const normalized = title.trim().toLowerCase();
+  for (const rule of COMMIT_TYPE_RULES) {
+    if (rule.keywords.some((keyword) => normalized.includes(keyword.toLowerCase()))) {
+      return rule.type;
+    }
+  }
+  return DEFAULT_COMMIT_TYPE;
+}
+
 function slugify(title) {
   let s = title.trim();
   s = removeEmoji(s);
+  s = removeLeadingBracketTag(s);
   s = s.replace(/\s+/g, "_");
   s = s.replace(/[~^:?*[\]\\"'<>|]/g, "");
   s = s.replace(/\.{2,}/g, "_");
@@ -26,12 +47,14 @@ function formatDate(createdAt) {
 }
 
 function buildBranchName(issueNumber, title, createdAt) {
-  return `${COMMIT_TYPE}/${formatDate(createdAt)}_#${issueNumber}_${slugify(title)}`;
+  const commitType = resolveCommitType(title);
+  return `${commitType}/${formatDate(createdAt)}_#${issueNumber}_${slugify(title)}`;
 }
 
 function buildCommitMessage(issueNumber, title) {
-  const cleaned = removeEmoji(title.trim()).replace(/\s+/g, " ").trim();
-  return `${COMMIT_TYPE}: ${cleaned.length > 0 ? cleaned : "untitled"} (#${issueNumber})`;
+  const commitType = resolveCommitType(title);
+  const cleaned = removeLeadingBracketTag(removeEmoji(title.trim())).replace(/\s+/g, " ").trim();
+  return `${commitType}: ${cleaned.length > 0 ? cleaned : "untitled"} (#${issueNumber})`;
 }
 
 function buildComment(issueNumber, title, createdAt) {
@@ -46,6 +69,8 @@ module.exports = {
   buildBranchName,
   buildCommitMessage,
   buildComment,
+  resolveCommitType,
   MAX_SLUG_LENGTH,
-  COMMIT_TYPE,
+  COMMIT_TYPE_RULES,
+  DEFAULT_COMMIT_TYPE,
 };
