@@ -35,7 +35,7 @@ function slugify(title) {
   let s = title.trim();
   s = removeEmoji(s);
   s = removeLeadingBracketTag(s);
-  s = s.replace(/\s+/g, "_");
+  s = s.replace(/[\s/]+/g, "_");
   s = s.replace(/[~^:?*[\]\\"'<>|]/g, "");
   s = s.replace(/\.{2,}/g, "_");
   s = s.replace(/_{2,}/g, "_");

@@ -75,6 +75,33 @@ test("이모지와 맨 앞 대괄호 태그가 함께 있으면 둘 다 제거�
   assert.equal(slugify("🛠️ [도구] 스크립트가 텍스트를 못 읽는 버그"), "스크립트가_텍스트를_못_읽는_버그");
 });
 
+test("슬래시는 언더스코어로 치환된다 (브랜치명 경로 충돌 방지)", () => {
+  assert.equal(slugify("README/이슈템플릿"), "README_이슈템플릿");
+});
+
+test("연속된 슬래시와 공백이 섞여도 구분자 하나로 축약된다", () => {
+  assert.equal(slugify("A/B/C 정리"), "A_B_C_정리");
+});
+
+test("슬래시 앞뒤에 공백이 있어도 구분자 하나로 축약된다", () => {
+  assert.equal(slugify("README / 이슈템플릿"), "README_이슈템플릿");
+});
+
+test("슬래시로만 구성된 제목은 untitled가 된다", () => {
+  assert.equal(slugify("///"), "untitled");
+});
+
+test("브랜치명에는 더 이상 슬래시가 남지 않는다 (git ref 경로 충돌 방지)", () => {
+  assert.equal(
+    buildBranchName(8, "README/이슈템플릿", "2026-08-12T00:00:00Z"),
+    "feat/20260812_#8_README_이슈템플릿"
+  );
+});
+
+test("커밋 메시지의 원본 제목에는 슬래시가 그대로 남는다 (git ref가 아니므로 범위 외)", () => {
+  assert.equal(buildCommitMessage(8, "README/이슈템플릿"), "feat: README/이슈템플릿 (#8)");
+});
+
 test("resolveCommitType: 버그/오류 키워드가 있으면 fix", () => {
   assert.equal(resolveCommitType("버그 수정 요청"), "fix");
 });
