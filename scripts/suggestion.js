@@ -57,7 +57,7 @@ function buildBranchName(issueNumber, title, createdAt) {
 }
 
 function buildWorktreeName(issueNumber, title, createdAt) {
-  return buildBranchName(issueNumber, title, createdAt).replace(/\//g, "_");
+  return `${formatDate(createdAt)}_#${issueNumber}_${slugify(title)}`;
 }
 
 function buildCommitMessage(issueNumber, title) {
