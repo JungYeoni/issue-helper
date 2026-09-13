@@ -71,7 +71,7 @@ function buildComment(issueNumber, title, createdAt) {
   const worktree = buildWorktreeName(issueNumber, title, createdAt);
   const commitMessage = buildCommitMessage(issueNumber, title);
   const date = formatDate(createdAt);
-  return `## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n\`\`\`\n${date}\n\`\`\`\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### 워킹트리\n\n\`\`\`\n${worktree}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
+  return `## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n\`\`\`\n${date}\n\`\`\`\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### worktree\n\n\`\`\`\n${worktree}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
 }
 
 module.exports = {
