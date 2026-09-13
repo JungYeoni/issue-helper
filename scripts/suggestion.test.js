@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const {
   slugify,
   buildBranchName,
+  buildWorktreeName,
   buildCommitMessage,
   buildComment,
   resolveCommitType,
@@ -102,6 +103,19 @@ test("커밋 메시지의 원본 제목에는 슬래시가 그대로 남는다 (
   assert.equal(buildCommitMessage(8, "README/이슈템플릿"), "feat: README/이슈템플릿 (#8)");
 });
 
+test("워킹트리 이름은 브랜치명의 슬래시를 언더스코어로 치환한 값이다 (로컬 디렉토리명으로 바로 사용 가능)", () => {
+  assert.equal(
+    buildWorktreeName(123, "서울 데이터 보고서 오류", "2026-07-15T09:00:00Z"),
+    "fix_20260715_#123_서울_데이터_보고서_오류"
+  );
+});
+
+test("워킹트리 이름은 slug 안의 슬래시도 이미 치환되어 있어 슬래시가 전혀 남지 않는다", () => {
+  const worktree = buildWorktreeName(8, "README/이슈템플릿", "2026-08-12T00:00:00Z");
+  assert.ok(!worktree.includes("/"));
+  assert.equal(worktree, "feat_20260812_#8_README_이슈템플릿");
+});
+
 test("resolveCommitType: 버그/오류 키워드가 있으면 fix", () => {
   assert.equal(resolveCommitType("버그 수정 요청"), "fix");
 });
@@ -186,7 +200,7 @@ test("코멘트 템플릿을 생성한다 (제목의 '오류' 키워드로 fix �
   const comment = buildComment(123, "서울 데이터 보고서 오류", "2026-07-15T09:00:00Z");
   assert.equal(
     comment,
-    "## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n```\n20260715\n```\n\n### 브랜치\n\n```\nfix/20260715_#123_서울_데이터_보고서_오류\n```\n\n### 커밋 메시지\n\n```\nfix: 서울 데이터 보고서 오류 (#123)\n```\n"
+    "## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n```\n20260715\n```\n\n### 브랜치\n\n```\nfix/20260715_#123_서울_데이터_보고서_오류\n```\n\n### 워킹트리\n\n```\nfix_20260715_#123_서울_데이터_보고서_오류\n```\n\n### 커밋 메시지\n\n```\nfix: 서울 데이터 보고서 오류 (#123)\n```\n"
   );
 });
 
@@ -194,6 +208,6 @@ test("코멘트 템플릿: 이모지 제거 + 대괄호 태그 제거 + 커밋 �
   const comment = buildComment(7, "🛠️ [도구] 스크립트가 텍스트를 못 읽는 버그", "2026-08-12T00:00:00Z");
   assert.equal(
     comment,
-    "## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n```\n20260812\n```\n\n### 브랜치\n\n```\nfix/20260812_#7_스크립트가_텍스트를_못_읽는_버그\n```\n\n### 커밋 메시지\n\n```\nfix: 스크립트가 텍스트를 못 읽는 버그 (#7)\n```\n"
+    "## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n```\n20260812\n```\n\n### 브랜치\n\n```\nfix/20260812_#7_스크립트가_텍스트를_못_읽는_버그\n```\n\n### 워킹트리\n\n```\nfix_20260812_#7_스크립트가_텍스트를_못_읽는_버그\n```\n\n### 커밋 메시지\n\n```\nfix: 스크립트가 텍스트를 못 읽는 버그 (#7)\n```\n"
   );
 });

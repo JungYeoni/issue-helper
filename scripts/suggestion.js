@@ -56,6 +56,10 @@ function buildBranchName(issueNumber, title, createdAt) {
   return `${commitType}/${formatDate(createdAt)}_#${issueNumber}_${slugify(title)}`;
 }
 
+function buildWorktreeName(issueNumber, title, createdAt) {
+  return buildBranchName(issueNumber, title, createdAt).replace(/\//g, "_");
+}
+
 function buildCommitMessage(issueNumber, title) {
   const commitType = resolveCommitType(title);
   const cleaned = removeLeadingBracketTag(removeEmoji(title.trim())).replace(/\s+/g, " ").trim();
@@ -64,14 +68,16 @@ function buildCommitMessage(issueNumber, title) {
 
 function buildComment(issueNumber, title, createdAt) {
   const branch = buildBranchName(issueNumber, title, createdAt);
+  const worktree = buildWorktreeName(issueNumber, title, createdAt);
   const commitMessage = buildCommitMessage(issueNumber, title);
   const date = formatDate(createdAt);
-  return `## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n\`\`\`\n${date}\n\`\`\`\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
+  return `## Guide by YEONI-ISSUE-HELPER\n\n### 날짜\n\n\`\`\`\n${date}\n\`\`\`\n\n### 브랜치\n\n\`\`\`\n${branch}\n\`\`\`\n\n### 워킹트리\n\n\`\`\`\n${worktree}\n\`\`\`\n\n### 커밋 메시지\n\n\`\`\`\n${commitMessage}\n\`\`\`\n`;
 }
 
 module.exports = {
   slugify,
   buildBranchName,
+  buildWorktreeName,
   buildCommitMessage,
   buildComment,
   resolveCommitType,
